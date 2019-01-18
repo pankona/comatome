@@ -24,7 +24,7 @@ func main() {
 	c := github.NewClient(tc)
 
 	_, resp, err := c.Activity.ListEventsPerformedByUser(
-		context.Background(), "pankona", true, nil)
+		context.Background(), "pankona", false, nil)
 	if err != nil {
 		panic(err)
 	}
