@@ -23,11 +23,25 @@ func main() {
 
 	c := github.NewClient(tc)
 
-	_, resp, err := c.Activity.ListEventsPerformedByUser(
-		context.Background(), "pankona", false, nil)
-	if err != nil {
-		panic(err)
+	page := 1
+	for {
+		events, resp, err := c.Activity.ListEventsPerformedByUser(
+			context.Background(),
+			"pankona",
+			false, // publicOnly
+			&github.ListOptions{Page: page})
+		if err != nil {
+			panic(err)
+		}
+
+		if resp.NextPage == 0 {
+			break
+		}
+
+		page = resp.NextPage
+
+		for _, v := range events {
+			fmt.Printf("%v: %s: %s\n", *v.CreatedAt, *v.Type, *v.Repo.Name)
+		}
 	}
-	fmt.Printf("resp: %v\n", resp)
-	//fmt.Printf("events: %v\n", events)
 }
