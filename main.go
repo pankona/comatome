@@ -25,23 +25,25 @@ func main() {
 
 	page := 1
 	for {
-		events, resp, err := c.Activity.ListEventsPerformedByUser(
+		result, resp, err := c.Search.Repositories(
 			context.Background(),
-			"pankona",
-			false, // publicOnly
-			&github.ListOptions{Page: page})
+			"user:pankona+created:2019-01-01..2019-02-01",
+			&github.SearchOptions{
+				ListOptions: github.ListOptions{
+					Page: page,
+				}})
 		if err != nil {
 			panic(err)
 		}
 
-		if resp.NextPage == 0 {
-			break
-		}
-
 		page = resp.NextPage
 
-		for _, v := range events {
-			fmt.Printf("%v: %s: %s\n", *v.CreatedAt, *v.Type, *v.Repo.Name)
+		for _, v := range result.Repositories {
+			fmt.Printf("%s: createdAt: %v\n", *v.Name, *v.CreatedAt)
+		}
+
+		if resp.NextPage == 0 {
+			break
 		}
 	}
 }
