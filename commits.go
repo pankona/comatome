@@ -13,6 +13,8 @@ type CommitsPerRepo map[string]int
 
 var errIncompleteResult = errors.New("incomplete result error")
 
+const fromto = "2018-10-01..2018-12-31"
+
 func QueryCommitsPerRepo(c *Client) (CommitsPerRepo, error) {
 	var (
 		m        CommitsPerRepo
@@ -45,7 +47,7 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail) (CommitsPerRepo,
 		for {
 			result, resp, err := c.Search.Commits(
 				context.Background(),
-				fmt.Sprintf("author-email:%s+author-date:2019-01-01..2019-02-01", email.GetEmail()),
+				fmt.Sprintf("author-email:%s+author-date:%s", email.GetEmail(), fromto),
 				&github.SearchOptions{
 					ListOptions: github.ListOptions{
 						PerPage: 100,
@@ -84,10 +86,10 @@ func ShowCommitsPerRepo(m CommitsPerRepo) {
 	sort.Strings(keys)
 
 	total := 0
-	fmt.Println("commits on 2019-01-01..2019-02-01")
+	fmt.Printf("commits on %s\n", fromto)
 	for _, v := range keys {
 		fmt.Printf("%3d commits on %s\n", m[v], v)
 		total += m[v]
 	}
-	fmt.Printf("total %d commits on this month\n", total)
+	fmt.Printf("total %d commits\n", total)
 }
