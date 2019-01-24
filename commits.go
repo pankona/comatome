@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
+	"time"
 
 	"github.com/google/go-github/v21/github"
 )
@@ -30,6 +31,7 @@ func QueryCommitsPerRepo(c *Client) (CommitsPerRepo, error) {
 	for i := 0; i < maxRetry; i++ {
 		m, err = queryCommitsPerRepo(c, emails)
 		if err == errIncompleteResult {
+			<-time.After(1 * time.Second)
 			continue
 		}
 		break
