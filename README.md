@@ -6,7 +6,7 @@ Sorry, under construction...
 ## How this looks like
 
 ```bash
-# Shows commits on specified term
+# Shows commits per repository committed on specified term
 $ github-contribution-checker 2018-10-01..2018-12-31
 6	pankona/godev
 9	pankona/gomo-simra
