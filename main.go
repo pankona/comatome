@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -10,6 +11,8 @@ import (
 	"github.com/google/go-github/v21/github"
 	"golang.org/x/oauth2"
 )
+
+var errIncompleteResult = errors.New("incomplete result error")
 
 func main() {
 	token := os.Getenv("GITHUB_API_TOKEN")
@@ -24,43 +27,19 @@ func main() {
 
 	c := github.NewClient(tc)
 
-	emails := []string{
-		"yosuke.akatsuka@gmail.com",
-		"yosuke.akatsuka@access-company.com",
-	}
+	var m map[string]int
+	var err error
+	maxRetry := 5
 
-	m := make(map[string]int)
-
-	for _, email := range emails {
-		page := 1
-		for {
-			result, resp, err := c.Search.Commits(
-				context.Background(),
-				fmt.Sprintf("author-email:%s+author-date:2019-01-01..2019-02-01", email),
-				&github.SearchOptions{
-					ListOptions: github.ListOptions{
-						PerPage: 100,
-						Page:    page,
-					}})
-			if err != nil {
-				panic(err)
-			}
-
-			page = resp.NextPage
-
-			fmt.Printf("len: %d\n", len(result.Commits))
-			if *result.IncompleteResults {
-				panic("incomplete result is true")
-			}
-
-			for _, v := range result.Commits {
-				m[*v.Repository.FullName] += 1
-			}
-
-			if resp.NextPage == 0 {
-				break
-			}
+	for i := 0; i < maxRetry; i++ {
+		m, err = queryCommitsPerRepo(c)
+		if err == errIncompleteResult {
+			continue
 		}
+		break
+	}
+	if err != nil {
+		panic(err)
 	}
 
 	keys := make([]string, len(m))
@@ -78,4 +57,45 @@ func main() {
 		total += m[v]
 	}
 	fmt.Printf("total %d commits on this month\n", total)
+}
+
+func queryCommitsPerRepo(c *github.Client) (map[string]int, error) {
+	emails, _, err := c.Users.ListEmails(context.Background(), nil)
+	if err != nil {
+		panic(err)
+	}
+
+	m := make(map[string]int)
+
+	for _, email := range emails {
+		page := 1
+		for {
+			result, resp, err := c.Search.Commits(
+				context.Background(),
+				fmt.Sprintf("author-email:%s+author-date:2019-01-01..2019-02-01", email.GetEmail()),
+				&github.SearchOptions{
+					ListOptions: github.ListOptions{
+						PerPage: 100,
+						Page:    page,
+					}})
+			if err != nil {
+				panic(err)
+			}
+
+			page = resp.NextPage
+
+			if *result.IncompleteResults {
+				return nil, errIncompleteResult
+			}
+
+			for _, v := range result.Commits {
+				m[*v.Repository.FullName] += 1
+			}
+
+			if resp.NextPage == 0 {
+				break
+			}
+		}
+	}
+	return m, nil
 }
