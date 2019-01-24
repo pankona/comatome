@@ -88,10 +88,9 @@ func ShowCommitsPerRepo(m CommitsPerRepo) {
 	sort.Strings(keys)
 
 	total := 0
-	fmt.Printf("commits on %s\n", fromto)
 	for _, v := range keys {
-		fmt.Printf("%3d commits on %s\n", m[v], v)
+		fmt.Printf("%d\t%s\n", m[v], v)
 		total += m[v]
 	}
-	fmt.Printf("total %d commits\n", total)
+	fmt.Printf("%d commits total\n", total)
 }
