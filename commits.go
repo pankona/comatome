@@ -92,5 +92,5 @@ func ShowCommitsPerRepo(m CommitsPerRepo) {
 		fmt.Printf("%d\t%s\n", m[v], v)
 		total += m[v]
 	}
-	fmt.Printf("%d commits total\n", total)
+	fmt.Printf("%d commits\n", total)
 }
