@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/google/go-github/v21/github"
 )
@@ -27,7 +28,9 @@ func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
 		page = resp.NextPage
 
 		for _, v := range result.Issues {
-			pulls[*v.RepositoryURL] += 1
+			ss := strings.Split(*v.RepositoryURL, "/")
+			repo := strings.Join(ss[len(ss)-2:], "/")
+			pulls[repo] += 1
 		}
 
 		if resp.NextPage == 0 {
