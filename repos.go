@@ -8,12 +8,13 @@ import (
 )
 
 func QueryCreatedRepos(c *Client, fromto string) ([]string, error) {
+	name := Username(c)
 	page := 1
 	createdRepos := make([]string, 0)
 	for {
 		result, resp, err := c.Search.Repositories(
 			context.Background(),
-			fmt.Sprintf("user:pankona created:%s", fromto),
+			fmt.Sprintf("user:%s created:%s", name, fromto),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,

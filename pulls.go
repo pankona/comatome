@@ -10,12 +10,13 @@ import (
 )
 
 func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
+	name := Username(c)
 	page := 1
 	pulls := make(map[string]int)
 	for {
 		result, resp, err := c.Search.Issues(
 			context.Background(),
-			fmt.Sprintf("type:pr author:pankona created:%s", fromto),
+			fmt.Sprintf("type:pr author:%s created:%s", name, fromto),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,
@@ -60,12 +61,13 @@ func ShowOpenedPullRequests(pulls map[string]int) {
 }
 
 func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error) {
+	name := Username(c)
 	page := 1
 	pulls := make(map[string]int)
 	for {
 		result, resp, err := c.Search.Issues(
 			context.Background(),
-			fmt.Sprintf("type:pr reviewed-by:pankona updated:%s -author:pankona", fromto),
+			fmt.Sprintf("type:pr reviewed-by:%s updated:%s -author:%s", name, fromto, name),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,
