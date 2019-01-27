@@ -49,7 +49,7 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (
 			// if 2018-01-01's commits should be included, fromto should be like 2018-12-31..2019-01-31
 			result, resp, err := c.Search.Commits(
 				context.Background(),
-				fmt.Sprintf("author-email:%s+author-date:%s", email.GetEmail(), fromto),
+				fmt.Sprintf("author-email:%s author-date:%s", email.GetEmail(), fromto),
 				&github.SearchOptions{
 					ListOptions: github.ListOptions{
 						PerPage: 100,

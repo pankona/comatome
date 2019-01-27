@@ -15,7 +15,7 @@ func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
 	for {
 		result, resp, err := c.Search.Issues(
 			context.Background(),
-			fmt.Sprintf("type:pr+author:pankona+created:%s", fromto),
+			fmt.Sprintf("type:pr author:pankona created:%s", fromto),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,
@@ -63,7 +63,7 @@ func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error)
 	for {
 		result, resp, err := c.Search.Issues(
 			context.Background(),
-			fmt.Sprintf("type:pr+reviewed-by:pankona+updated:%s -author:pankona", fromto),
+			fmt.Sprintf("type:pr reviewed-by:pankona updated:%s -author:pankona", fromto),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,
@@ -76,7 +76,6 @@ func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error)
 		page = resp.NextPage
 
 		for _, v := range result.Issues {
-			fmt.Println(v.PullRequestLinks.GetURL())
 			ss := strings.Split(*v.RepositoryURL, "/")
 			repo := strings.Join(ss[len(ss)-2:], "/")
 			pulls[repo] += 1
@@ -103,5 +102,5 @@ func ShowReviewedPullRequests(pulls map[string]int) {
 		fmt.Printf("%d\t%s\n", pulls[v], v)
 		total += pulls[v]
 	}
-	fmt.Printf("%d pull requests opened in %d repositories\n", total, len(pulls))
+	fmt.Printf("Reviewed %d pull requests in %d repositories\n", total, len(pulls))
 }

@@ -20,6 +20,8 @@ func main() {
 	createdRepos(c, *fromto)
 	fmt.Println()
 	openedPullRequests(c, *fromto)
+	fmt.Println()
+	reviewedPullRequests(c, *fromto)
 }
 
 func commits(c *Client, fromto string) {
