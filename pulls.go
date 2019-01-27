@@ -51,10 +51,12 @@ func ShowOpenedPullRequests(pulls map[string]int) {
 
 	total := 0
 	for _, v := range keys {
-		fmt.Printf("%d\t%s\n", pulls[v], v)
 		total += pulls[v]
 	}
-	fmt.Printf("%d pull requests opened in %d repositories\n", total, len(pulls))
+	fmt.Printf("Opened %d pull requests in %d repositories\n", total, len(pulls))
+	for _, v := range keys {
+		fmt.Printf("%d\t%s\n", pulls[v], v)
+	}
 }
 
 func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error) {
@@ -99,8 +101,10 @@ func ShowReviewedPullRequests(pulls map[string]int) {
 
 	total := 0
 	for _, v := range keys {
-		fmt.Printf("%d\t%s\n", pulls[v], v)
 		total += pulls[v]
 	}
 	fmt.Printf("Reviewed %d pull requests in %d repositories\n", total, len(pulls))
+	for _, v := range keys {
+		fmt.Printf("%d\t%s\n", pulls[v], v)
+	}
 }

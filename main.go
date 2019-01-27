@@ -37,7 +37,7 @@ func createdRepos(c *Client, fromto string) {
 	if err != nil {
 		panic(err)
 	}
-	showCreatedRepos(results)
+	ShowCreatedRepos(results)
 }
 
 func openedPullRequests(c *Client, fromto string) {

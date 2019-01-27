@@ -36,9 +36,9 @@ func QueryCreatedRepos(c *Client, fromto string) ([]string, error) {
 	return createdRepos, nil
 }
 
-func showCreatedRepos(repos []string) {
+func ShowCreatedRepos(repos []string) {
+	fmt.Printf("Created %d repositories\n", len(repos))
 	for _, v := range repos {
 		fmt.Printf("%s\n", v)
 	}
-	fmt.Printf("%d repositories created\n", len(repos))
 }
