@@ -45,3 +45,11 @@ func openedPullRequests(c *Client, fromto string) {
 	}
 	ShowOpenedPullRequests(results)
 }
+
+func reviewedPullRequests(c *Client, fromto string) {
+	results, err := QueryReviewedPullRequests(c, fromto)
+	if err != nil {
+		panic(err)
+	}
+	ShowReviewedPullRequests(results)
+}
