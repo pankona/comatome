@@ -7,6 +7,7 @@ import (
 )
 
 type flags struct {
+	all          *bool
 	commits      *bool
 	createdRepos *bool
 	openedPRs    *bool
@@ -17,6 +18,7 @@ type flags struct {
 func main() {
 	fromto := flag.String("fromto", "", "specify year and month by yyyymm format to fetch contributions")
 	f := flags{
+		all:          flag.Bool("all", false, "show all"),
 		commits:      flag.Bool("co", false, "show commits"),
 		createdRepos: flag.Bool("re", false, "show created repositories"),
 		openedPRs:    flag.Bool("op", false, "show opened pull requests"),
@@ -31,23 +33,23 @@ func main() {
 	}
 	c := NewClient(os.Getenv("GITHUB_API_TOKEN"))
 
-	if *f.commits {
+	if *f.all || *f.commits {
 		commits(c, *fromto)
 		fmt.Println()
 	}
-	if *f.createdRepos {
+	if *f.all || *f.createdRepos {
 		createdRepos(c, *fromto)
 		fmt.Println()
 	}
-	if *f.openedPRs {
+	if *f.all || *f.openedPRs {
 		openedPullRequests(c, *fromto)
 		fmt.Println()
 	}
-	if *f.reviewedPRs {
+	if *f.all || *f.reviewedPRs {
 		reviewedPullRequests(c, *fromto)
 		fmt.Println()
 	}
-	if *f.openedIssues {
+	if *f.all || *f.openedIssues {
 		openedIssues(c, *fromto)
 		fmt.Println()
 	}
