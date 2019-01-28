@@ -6,8 +6,24 @@ import (
 	"os"
 )
 
+type flags struct {
+	commits      *bool
+	createdRepos *bool
+	openedPRs    *bool
+	reviewedPRs  *bool
+	openedIssues *bool
+}
+
 func main() {
 	fromto := flag.String("fromto", "", "specify year and month by yyyymm format to fetch contributions")
+	f := flags{
+		commits:      flag.Bool("co", false, "show commits"),
+		createdRepos: flag.Bool("re", false, "show created repositories"),
+		openedPRs:    flag.Bool("op", false, "show opened pull requests"),
+		reviewedPRs:  flag.Bool("rp", false, "show reviewed pull requests"),
+		openedIssues: flag.Bool("oi", false, "show opened issues"),
+	}
+
 	flag.Parse()
 
 	if *fromto == "" {
@@ -15,15 +31,26 @@ func main() {
 	}
 	c := NewClient(os.Getenv("GITHUB_API_TOKEN"))
 
-	commits(c, *fromto)
-	fmt.Println()
-	createdRepos(c, *fromto)
-	fmt.Println()
-	openedPullRequests(c, *fromto)
-	fmt.Println()
-	reviewedPullRequests(c, *fromto)
-	fmt.Println()
-	openedIssues(c, *fromto)
+	if *f.commits {
+		commits(c, *fromto)
+		fmt.Println()
+	}
+	if *f.createdRepos {
+		createdRepos(c, *fromto)
+		fmt.Println()
+	}
+	if *f.openedPRs {
+		openedPullRequests(c, *fromto)
+		fmt.Println()
+	}
+	if *f.reviewedPRs {
+		reviewedPullRequests(c, *fromto)
+		fmt.Println()
+	}
+	if *f.openedIssues {
+		openedIssues(c, *fromto)
+		fmt.Println()
+	}
 }
 
 func commits(c *Client, fromto string) {
