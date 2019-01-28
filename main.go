@@ -22,6 +22,8 @@ func main() {
 	openedPullRequests(c, *fromto)
 	fmt.Println()
 	reviewedPullRequests(c, *fromto)
+	fmt.Println()
+	openedIssues(c, *fromto)
 }
 
 func commits(c *Client, fromto string) {
@@ -54,4 +56,12 @@ func reviewedPullRequests(c *Client, fromto string) {
 		panic(err)
 	}
 	ShowReviewedPullRequests(results)
+}
+
+func openedIssues(c *Client, fromto string) {
+	results, err := QueryOpenedIssues(c, fromto)
+	if err != nil {
+		panic(err)
+	}
+	ShowOpenedIssues(results)
 }
