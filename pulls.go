@@ -65,9 +65,10 @@ func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error)
 	page := 1
 	pulls := make(map[string]int)
 	for {
+		// TODO: how to retrieve "reviewed date" ?
 		result, resp, err := c.Search.Issues(
 			context.Background(),
-			fmt.Sprintf("type:pr reviewed-by:%s updated:%s -author:%s", name, fromto, name),
+			fmt.Sprintf("type:pr reviewed-by:%s created:%s -author:%s", name, fromto, name),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,
