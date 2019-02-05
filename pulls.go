@@ -9,6 +9,7 @@ import (
 	"github.com/google/go-github/v21/github"
 )
 
+// QueryOpenedPullRequests queries opened pull requests on specified term (fromto)
 func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
 	name := Username(c)
 	page := 1
@@ -31,7 +32,7 @@ func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
 		for _, v := range result.Issues {
 			ss := strings.Split(*v.RepositoryURL, "/")
 			repo := strings.Join(ss[len(ss)-2:], "/")
-			pulls[repo] += 1
+			pulls[repo]++
 		}
 
 		if resp.NextPage == 0 {
@@ -41,10 +42,11 @@ func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
 	return pulls, nil
 }
 
+// ShowOpenedPullRequests shows opened pull requests
 func ShowOpenedPullRequests(pulls map[string]int) {
 	keys := make([]string, len(pulls))
 	index := 0
-	for k, _ := range pulls {
+	for k := range pulls {
 		keys[index] = k
 		index++
 	}
@@ -60,6 +62,9 @@ func ShowOpenedPullRequests(pulls map[string]int) {
 	}
 }
 
+// QueryReviewedPullRequests queries reviewed pull requests on specified term (fromto)
+// TODO: it's not sure how to filter "pull requests by reviewed date".
+// https://stackoverflow.com/questions/54396853/is-there-a-way-to-query-when-i-contributed-to-a-pull-request-with-submitting-rev/54441897
 func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error) {
 	name := Username(c)
 	page := 1
@@ -83,7 +88,7 @@ func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error)
 		for _, v := range result.Issues {
 			ss := strings.Split(*v.RepositoryURL, "/")
 			repo := strings.Join(ss[len(ss)-2:], "/")
-			pulls[repo] += 1
+			pulls[repo]++
 		}
 
 		if resp.NextPage == 0 {
@@ -93,10 +98,11 @@ func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error)
 	return pulls, nil
 }
 
+// ShowReviewedPullRequests shows reviewed pull requests
 func ShowReviewedPullRequests(pulls map[string]int) {
 	keys := make([]string, len(pulls))
 	index := 0
-	for k, _ := range pulls {
+	for k := range pulls {
 		keys[index] = k
 		index++
 	}

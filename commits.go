@@ -10,10 +10,12 @@ import (
 	"github.com/google/go-github/v21/github"
 )
 
+// CommitsPerRepo is a map to represent commits/repository
 type CommitsPerRepo map[string]int
 
 var errIncompleteResult = errors.New("incomplete result error")
 
+// QueryCommitsPerRepo queries commits per repository created on specified term (fromto)
 func QueryCommitsPerRepo(c *Client, fromto string) (CommitsPerRepo, error) {
 	var (
 		m        CommitsPerRepo
@@ -66,7 +68,7 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (
 			}
 
 			for _, v := range result.Commits {
-				m[*v.Repository.FullName] += 1
+				m[*v.Repository.FullName]++
 			}
 
 			if resp.NextPage == 0 {
@@ -78,10 +80,11 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (
 	return m, nil
 }
 
+// ShowCommitsPerRepo shows commits/repositories
 func ShowCommitsPerRepo(m CommitsPerRepo) {
 	keys := make([]string, len(m))
 	index := 0
-	for k, _ := range m {
+	for k := range m {
 		keys[index] = k
 		index++
 	}
