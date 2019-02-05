@@ -7,24 +7,23 @@ import (
 )
 
 type flags struct {
-	all          *bool
-	commits      *bool
-	createdRepos *bool
-	openedPRs    *bool
-	reviewedPRs  *bool
-	openedIssues *bool
+	all          bool
+	commits      bool
+	createdRepos bool
+	openedPRs    bool
+	reviewedPRs  bool
+	openedIssues bool
 }
 
 func main() {
 	fromto := flag.String("fromto", "", "specify year and month by yyyymm format to fetch contributions")
-	f := flags{
-		all:          flag.Bool("all", false, "show all"),
-		commits:      flag.Bool("co", false, "show commits"),
-		createdRepos: flag.Bool("re", false, "show created repositories"),
-		openedPRs:    flag.Bool("op", false, "show opened pull requests"),
-		reviewedPRs:  flag.Bool("rp", false, "show reviewed pull requests"),
-		openedIssues: flag.Bool("oi", false, "show opened issues"),
-	}
+	f := flags{}
+	flag.BoolVar(&f.all, "all", false, "show all")
+	flag.BoolVar(&f.commits, "co", false, "show commits")
+	flag.BoolVar(&f.createdRepos, "re", false, "show created repositories")
+	flag.BoolVar(&f.openedPRs, "op", false, "show opened pull requests")
+	flag.BoolVar(&f.reviewedPRs, "rp", false, "show reviewed pull requests")
+	flag.BoolVar(&f.openedIssues, "oi", false, "show opened issues")
 
 	flag.Parse()
 
@@ -33,23 +32,33 @@ func main() {
 	}
 	c := NewClient(os.Getenv("GITHUB_API_TOKEN"))
 
-	if *f.all || *f.commits {
+	if f.all {
+		f = flags{
+			commits:      true,
+			createdRepos: true,
+			openedPRs:    true,
+			reviewedPRs:  true,
+			openedIssues: true,
+		}
+	}
+
+	if f.commits {
 		commits(c, *fromto)
 		fmt.Println()
 	}
-	if *f.all || *f.createdRepos {
+	if f.createdRepos {
 		createdRepos(c, *fromto)
 		fmt.Println()
 	}
-	if *f.all || *f.openedPRs {
+	if f.openedPRs {
 		openedPullRequests(c, *fromto)
 		fmt.Println()
 	}
-	if *f.all || *f.reviewedPRs {
+	if f.reviewedPRs {
 		reviewedPullRequests(c, *fromto)
 		fmt.Println()
 	}
-	if *f.all || *f.openedIssues {
+	if f.openedIssues {
 		openedIssues(c, *fromto)
 		fmt.Println()
 	}
