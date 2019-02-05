@@ -9,6 +9,7 @@ import (
 	"github.com/google/go-github/v21/github"
 )
 
+// QueryOpenedIssues queries opened issues on specified term (fromto)
 func QueryOpenedIssues(c *Client, fromto string) (map[string]int, error) {
 	name := Username(c)
 	page := 1
@@ -41,6 +42,7 @@ func QueryOpenedIssues(c *Client, fromto string) (map[string]int, error) {
 	return pulls, nil
 }
 
+// ShowOpenedIssues shows opened issues
 func ShowOpenedIssues(pulls map[string]int) {
 	keys := make([]string, len(pulls))
 	index := 0

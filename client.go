@@ -8,10 +8,12 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// Client manages communication with GitHub API
 type Client struct {
 	*github.Client
 }
 
+// NewClient returns a HTTP Client with specified GitHub API token
 func NewClient(token string) *Client {
 	var tc *http.Client
 	if token != "" {

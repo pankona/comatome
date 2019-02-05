@@ -7,6 +7,7 @@ import (
 	"github.com/google/go-github/v21/github"
 )
 
+// QueryCreatedRepos queries created repositories on specified term (fromto)
 func QueryCreatedRepos(c *Client, fromto string) ([]string, error) {
 	name := Username(c)
 	page := 1
@@ -37,6 +38,7 @@ func QueryCreatedRepos(c *Client, fromto string) ([]string, error) {
 	return createdRepos, nil
 }
 
+// ShowCreatedRepos shows created repositories
 func ShowCreatedRepos(repos []string) {
 	fmt.Printf("Created %d repositories\n", len(repos))
 	for _, v := range repos {
