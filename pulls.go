@@ -31,7 +31,7 @@ func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
 		for _, v := range result.Issues {
 			ss := strings.Split(*v.RepositoryURL, "/")
 			repo := strings.Join(ss[len(ss)-2:], "/")
-			pulls[repo] += 1
+			pulls[repo]++
 		}
 
 		if resp.NextPage == 0 {
@@ -83,7 +83,7 @@ func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error)
 		for _, v := range result.Issues {
 			ss := strings.Split(*v.RepositoryURL, "/")
 			repo := strings.Join(ss[len(ss)-2:], "/")
-			pulls[repo] += 1
+			pulls[repo]++
 		}
 
 		if resp.NextPage == 0 {

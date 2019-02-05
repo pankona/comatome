@@ -66,7 +66,7 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (
 			}
 
 			for _, v := range result.Commits {
-				m[*v.Repository.FullName] += 1
+				m[*v.Repository.FullName]++
 			}
 
 			if resp.NextPage == 0 {
