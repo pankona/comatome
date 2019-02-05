@@ -1,6 +1,6 @@
-# github-contribution-checker
+# comatome
 
-Shows your GitHub contributions in various text format.  
+Shows your GitHub contributions summary in various text format.  
 Sorry, under construction...
 
 ## How this looks like
