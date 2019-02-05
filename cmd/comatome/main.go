@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"os"
+
+	"github.com/pankona/comatome"
 )
 
 type flags struct {
@@ -30,7 +32,7 @@ func main() {
 	if *fromto == "" {
 		panic("fromto is not specified.")
 	}
-	c := NewClient(os.Getenv("GITHUB_API_TOKEN"))
+	c := comatome.NewClient(os.Getenv("GITHUB_API_TOKEN"))
 
 	if f.all {
 		f = flags{
@@ -64,42 +66,42 @@ func main() {
 	}
 }
 
-func commits(c *Client, fromto string) {
-	results, err := QueryCommitsPerRepo(c, fromto)
+func commits(c *comatome.Client, fromto string) {
+	results, err := comatome.QueryCommitsPerRepo(c, fromto)
 	if err != nil {
 		panic(err)
 	}
-	ShowCommitsPerRepo(results)
+	comatome.ShowCommitsPerRepo(results)
 }
 
-func createdRepos(c *Client, fromto string) {
-	results, err := QueryCreatedRepos(c, fromto)
+func createdRepos(c *comatome.Client, fromto string) {
+	results, err := comatome.QueryCreatedRepos(c, fromto)
 	if err != nil {
 		panic(err)
 	}
-	ShowCreatedRepos(results)
+	comatome.ShowCreatedRepos(results)
 }
 
-func openedPullRequests(c *Client, fromto string) {
-	results, err := QueryOpenedPullRequests(c, fromto)
+func openedPullRequests(c *comatome.Client, fromto string) {
+	results, err := comatome.QueryOpenedPullRequests(c, fromto)
 	if err != nil {
 		panic(err)
 	}
-	ShowOpenedPullRequests(results)
+	comatome.ShowOpenedPullRequests(results)
 }
 
-func reviewedPullRequests(c *Client, fromto string) {
-	results, err := QueryReviewedPullRequests(c, fromto)
+func reviewedPullRequests(c *comatome.Client, fromto string) {
+	results, err := comatome.QueryReviewedPullRequests(c, fromto)
 	if err != nil {
 		panic(err)
 	}
-	ShowReviewedPullRequests(results)
+	comatome.ShowReviewedPullRequests(results)
 }
 
-func openedIssues(c *Client, fromto string) {
-	results, err := QueryOpenedIssues(c, fromto)
+func openedIssues(c *comatome.Client, fromto string) {
+	results, err := comatome.QueryOpenedIssues(c, fromto)
 	if err != nil {
 		panic(err)
 	}
-	ShowOpenedIssues(results)
+	comatome.ShowOpenedIssues(results)
 }

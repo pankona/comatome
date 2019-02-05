@@ -1,4 +1,4 @@
-module github.com/pankona/github-contribution-checker
+module github.com/pankona/comatome
 
 require (
 	github.com/google/go-github/v21 v21.0.0
