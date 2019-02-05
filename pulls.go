@@ -44,7 +44,7 @@ func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
 func ShowOpenedPullRequests(pulls map[string]int) {
 	keys := make([]string, len(pulls))
 	index := 0
-	for k, _ := range pulls {
+	for k := range pulls {
 		keys[index] = k
 		index++
 	}
@@ -96,7 +96,7 @@ func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error)
 func ShowReviewedPullRequests(pulls map[string]int) {
 	keys := make([]string, len(pulls))
 	index := 0
-	for k, _ := range pulls {
+	for k := range pulls {
 		keys[index] = k
 		index++
 	}

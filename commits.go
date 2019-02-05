@@ -81,7 +81,7 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (
 func ShowCommitsPerRepo(m CommitsPerRepo) {
 	keys := make([]string, len(m))
 	index := 0
-	for k, _ := range m {
+	for k := range m {
 		keys[index] = k
 		index++
 	}

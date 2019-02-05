@@ -44,7 +44,7 @@ func QueryOpenedIssues(c *Client, fromto string) (map[string]int, error) {
 func ShowOpenedIssues(pulls map[string]int) {
 	keys := make([]string, len(pulls))
 	index := 0
-	for k, _ := range pulls {
+	for k := range pulls {
 		keys[index] = k
 		index++
 	}
