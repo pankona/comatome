@@ -18,7 +18,9 @@ type flags struct {
 }
 
 func main() {
-	fromto := flag.String("fromto", "", "specify year and month by yyyymm format to fetch contributions")
+	var fromto string
+
+	flag.StringVar(&fromto, "fromto", "", "specify year and month by yyyymm format to fetch contributions")
 	f := flags{}
 	flag.BoolVar(&f.all, "all", false, "show all")
 	flag.BoolVar(&f.commits, "co", false, "show commits")
@@ -29,8 +31,9 @@ func main() {
 
 	flag.Parse()
 
-	if *fromto == "" {
-		panic("fromto is not specified.")
+	if fromto == "" {
+		fmt.Println("fromto must be specified")
+		os.Exit(1)
 	}
 	c := comatome.NewClient(os.Getenv("GITHUB_API_TOKEN"))
 
@@ -45,23 +48,23 @@ func main() {
 	}
 
 	if f.commits {
-		commits(c, *fromto)
+		commits(c, fromto)
 		fmt.Println()
 	}
 	if f.createdRepos {
-		createdRepos(c, *fromto)
+		createdRepos(c, fromto)
 		fmt.Println()
 	}
 	if f.openedPRs {
-		openedPullRequests(c, *fromto)
+		openedPullRequests(c, fromto)
 		fmt.Println()
 	}
 	if f.reviewedPRs {
-		reviewedPullRequests(c, *fromto)
+		reviewedPullRequests(c, fromto)
 		fmt.Println()
 	}
 	if f.openedIssues {
-		openedIssues(c, *fromto)
+		openedIssues(c, fromto)
 		fmt.Println()
 	}
 }
