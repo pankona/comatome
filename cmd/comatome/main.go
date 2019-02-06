@@ -19,8 +19,8 @@ type flags struct {
 
 func main() {
 	var fromto string
-
 	flag.StringVar(&fromto, "fromto", "", "specify year and month by yyyymm format to fetch contributions")
+
 	f := flags{}
 	flag.BoolVar(&f.all, "all", false, "show all")
 	flag.BoolVar(&f.commits, "co", false, "show commits")
