@@ -58,7 +58,7 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (
 						Page:    page,
 					}})
 			if err != nil {
-				panic(err)
+				return nil, fmt.Errorf("failed search commits: %v", err)
 			}
 
 			page = resp.NextPage

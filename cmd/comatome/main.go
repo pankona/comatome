@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/pankona/comatome"
 )
@@ -70,11 +71,22 @@ func main() {
 }
 
 func commits(c *comatome.Client, fromto string) {
-	results, err := comatome.QueryCommitsPerRepo(c, fromto)
-	if err != nil {
-		panic(err)
+	var (
+		delaySec time.Duration = 1
+		retryMax               = 10
+	)
+	for i := 0; i < retryMax; i++ {
+		results, err := comatome.QueryCommitsPerRepo(c, fromto)
+		if err != nil {
+			fmt.Printf("(continue to work) querying commits failed: %v\n", err)
+			<-time.After(delaySec * time.Second)
+			delaySec = delaySec << 1
+			continue
+		}
+		comatome.ShowCommitsPerRepo(results)
+		return
 	}
-	comatome.ShowCommitsPerRepo(results)
+	panic("failed to query commits")
 }
 
 func createdRepos(c *comatome.Client, fromto string) {
