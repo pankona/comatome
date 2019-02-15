@@ -16,7 +16,7 @@ type CommitsPerRepo map[string]int
 var errIncompleteResult = errors.New("incomplete result error")
 
 // QueryCommitsPerRepo queries commits per repository created on specified term (fromto)
-func QueryCommitsPerRepo(c *Client, fromto string) (CommitsPerRepo, error) {
+func QueryCommitsPerRepo(c *Client, from, to time.Time) (CommitsPerRepo, error) {
 	var (
 		m        CommitsPerRepo
 		err      error
@@ -29,7 +29,7 @@ func QueryCommitsPerRepo(c *Client, fromto string) (CommitsPerRepo, error) {
 	}
 
 	for i := 0; i < maxRetry; i++ {
-		m, err = queryCommitsPerRepo(c, emails, fromto)
+		m, err = queryCommitsPerRepo(c, emails, from, to)
 		if err == errIncompleteResult {
 			<-time.After(1 * time.Second)
 			continue
@@ -40,7 +40,7 @@ func QueryCommitsPerRepo(c *Client, fromto string) (CommitsPerRepo, error) {
 	return m, err
 }
 
-func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (CommitsPerRepo, error) {
+func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, from, to time.Time) (CommitsPerRepo, error) {
 	m := make(CommitsPerRepo)
 
 	for _, email := range emails {
@@ -51,7 +51,7 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (
 			// if 2018-01-01's commits should be included, fromto should be like 2018-12-31..2019-01-31
 			result, resp, err := c.Search.Commits(
 				context.Background(),
-				fmt.Sprintf("author-email:%s author-date:%s", email.GetEmail(), fromto),
+				fmt.Sprintf("author-email:%s author-date:%s", email.GetEmail(), from, to),
 				&github.SearchOptions{
 					ListOptions: github.ListOptions{
 						PerPage: 100,

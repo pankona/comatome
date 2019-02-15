@@ -3,19 +3,20 @@ package comatome
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/go-github/v21/github"
 )
 
 // QueryCreatedRepos queries created repositories on specified term (fromto)
-func QueryCreatedRepos(c *Client, fromto string) ([]string, error) {
+func QueryCreatedRepos(c *Client, from, to time.Time) ([]string, error) {
 	name := Username(c)
 	page := 1
 	createdRepos := make([]string, 0)
 	for {
 		result, resp, err := c.Search.Repositories(
 			context.Background(),
-			fmt.Sprintf("user:%s created:%s fork:true", name, fromto),
+			fmt.Sprintf("user:%s created:%s fork:true", name, from, to),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,

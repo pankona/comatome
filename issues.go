@@ -5,19 +5,20 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/google/go-github/v21/github"
 )
 
 // QueryOpenedIssues queries opened issues on specified term (fromto)
-func QueryOpenedIssues(c *Client, fromto string) (map[string]int, error) {
+func QueryOpenedIssues(c *Client, from, to time.Time) (map[string]int, error) {
 	name := Username(c)
 	page := 1
 	pulls := make(map[string]int)
 	for {
 		result, resp, err := c.Search.Issues(
 			context.Background(),
-			fmt.Sprintf("type:issue author:%s created:%s", name, fromto),
+			fmt.Sprintf("type:issue author:%s created:%s", name, from, to),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,

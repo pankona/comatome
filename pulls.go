@@ -5,19 +5,20 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/google/go-github/v21/github"
 )
 
 // QueryOpenedPullRequests queries opened pull requests on specified term (fromto)
-func QueryOpenedPullRequests(c *Client, fromto string) (map[string]int, error) {
+func QueryOpenedPullRequests(c *Client, from, to time.Time) (map[string]int, error) {
 	name := Username(c)
 	page := 1
 	pulls := make(map[string]int)
 	for {
 		result, resp, err := c.Search.Issues(
 			context.Background(),
-			fmt.Sprintf("type:pr author:%s created:%s", name, fromto),
+			fmt.Sprintf("type:pr author:%s created:%s", name, from, to),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,
@@ -65,7 +66,7 @@ func ShowOpenedPullRequests(pulls map[string]int) {
 // QueryReviewedPullRequests queries reviewed pull requests on specified term (fromto)
 // TODO: it's not sure how to filter "pull requests by reviewed date".
 // https://stackoverflow.com/questions/54396853/is-there-a-way-to-query-when-i-contributed-to-a-pull-request-with-submitting-rev/54441897
-func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error) {
+func QueryReviewedPullRequests(c *Client, from, to time.Time) (map[string]int, error) {
 	name := Username(c)
 	page := 1
 	pulls := make(map[string]int)
@@ -73,7 +74,7 @@ func QueryReviewedPullRequests(c *Client, fromto string) (map[string]int, error)
 		// TODO: how to retrieve "reviewed date" ?
 		result, resp, err := c.Search.Issues(
 			context.Background(),
-			fmt.Sprintf("type:pr reviewed-by:%s created:%s -author:%s", name, fromto, name),
+			fmt.Sprintf("type:pr reviewed-by:%s created:%s -author:%s", name, from, to, name),
 			&github.SearchOptions{
 				ListOptions: github.ListOptions{
 					PerPage: 100,
