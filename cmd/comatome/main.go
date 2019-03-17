@@ -80,6 +80,8 @@ func fromto(from, to string) (*comatome.FromTo, error) {
 		if err != nil {
 			return nil, err
 		}
+		t = t.AddDate(0, 1, 0)
+		t = t.AddDate(0, 0, -1)
 		return comatome.NewFromTo(f, t, nil), nil
 	}
 
