@@ -7,7 +7,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/google/go-github/v21/github"
+	"github.com/google/go-github/v24/github"
 )
 
 // CommitsPerRepo is a map to represent commits/repository
@@ -16,7 +16,7 @@ type CommitsPerRepo map[string]int
 var errIncompleteResult = errors.New("incomplete result error")
 
 // QueryCommitsPerRepo queries commits per repository created on specified term (fromto)
-func QueryCommitsPerRepo(c *Client, fromto string) (CommitsPerRepo, error) {
+func QueryCommitsPerRepo(c *Client, fromto *FromTo) (CommitsPerRepo, error) {
 	var (
 		m        CommitsPerRepo
 		err      error
@@ -25,7 +25,7 @@ func QueryCommitsPerRepo(c *Client, fromto string) (CommitsPerRepo, error) {
 
 	emails, _, err := c.Users.ListEmails(context.Background(), nil)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	for i := 0; i < maxRetry; i++ {
@@ -40,8 +40,9 @@ func QueryCommitsPerRepo(c *Client, fromto string) (CommitsPerRepo, error) {
 	return m, err
 }
 
-func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (CommitsPerRepo, error) {
+func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto *FromTo) (CommitsPerRepo, error) {
 	m := make(CommitsPerRepo)
+	from, to := fromto.QueryStr()
 
 	for _, email := range emails {
 		page := 1
@@ -51,14 +52,14 @@ func queryCommitsPerRepo(c *Client, emails []*github.UserEmail, fromto string) (
 			// if 2018-01-01's commits should be included, fromto should be like 2018-12-31..2019-01-31
 			result, resp, err := c.Search.Commits(
 				context.Background(),
-				fmt.Sprintf("author-email:%s author-date:%s", email.GetEmail(), fromto),
+				fmt.Sprintf("author-email:%s author-date:%s..%s", email.GetEmail(), from, to),
 				&github.SearchOptions{
 					ListOptions: github.ListOptions{
 						PerPage: 100,
 						Page:    page,
 					}})
 			if err != nil {
-				panic(err)
+				return nil, fmt.Errorf("failed search commits: %v", err)
 			}
 
 			page = resp.NextPage
