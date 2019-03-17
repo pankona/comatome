@@ -32,6 +32,15 @@ func main() {
 	flag.StringVar(&f.to, "to", "", "specify time contributed to (yyyy-mm)")
 	flag.Parse()
 
+	// if flag is not specified, treat as all
+	if !f.commits &&
+		!f.createdRepos &&
+		!f.openedPRs &&
+		!f.reviewedPRs &&
+		!f.openedIssues {
+		f.all = true
+	}
+
 	if f.all {
 		f = flags{
 			commits:      true,
