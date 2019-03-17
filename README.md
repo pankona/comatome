@@ -6,23 +6,54 @@ Sorry, under construction...
 ## How this looks like
 
 ```bash
-# Shows commits per repository committed on specified term
-$ comatome -from 2019-01 -to 2019-02 -all
-12	pankona/dotfiles
-25	pankona/comatome
-3	pankona/hashira
-30	pankona/ki
-22	pankona/kodama
-92 commits
+# e.g) Show contributions on 2019/03
+$ comatome -from 2019-03 -to 2019-03 -all
 
-pankona/ki
-pankona/comatome
-pankona/dotfiles
-3 repositories created
+Created 80 commits in 13 repositories
+1	CPSPlatform/CloudConnectAgent
+28	CPSPlatform/CoreService
+8	CPSPlatform/PT_Gas_US
+1	CPSPlatform/PostProcessService
+1	google/go-github
+1	pankona/TIL
+7	pankona/comatome
+4	pankona/dotfiles
+1	pankona/godev
+3	pankona/gomo-simra
+12	pankona/hashira
+1	pankona/orderedmap
+12	pankona/slides
 
+Created 2 repositories
+pankona/go-github
+pankona/TIL
+
+Opened 12 pull requests in 7 repositories
+1	CPSPlatform/CloudConnectAgent
+4	CPSPlatform/CoreService
+1	CPSPlatform/PT_Gas_US
+1	google/go-github
 1	pankona/comatome
-2	pankona/gocui
-3 pull requests opened
+1	pankona/gomo-simra
+3	pankona/hashira
+
+Reviewed 26 pull requests in 10 repositories
+1	CPSPlatform/AppTemplate
+1	CPSPlatform/CPSPAgent
+4	CPSPlatform/CloudConnectAgent
+4	CPSPlatform/CoreService
+8	CPSPlatform/PT_DigitalManufacture
+1	CPSPlatform/PT_Gas_US
+2	CPSPlatform/PostProcessService
+2	CPSPlatform/godev
+2	access-company/one_hccex
+1	pankona/godev
+
+Opened 6 issues in 4 repositories
+1	CPSPlatform/PT_Gas_US
+1	google/go-github
+1	pankona/gomo-simra
+3	pankona/hashira
 ```
 
 ## Usage
