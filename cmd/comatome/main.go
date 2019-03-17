@@ -16,6 +16,8 @@ type flags struct {
 	openedPRs    bool
 	reviewedPRs  bool
 	openedIssues bool
+
+	from, to string
 }
 
 func main() {
@@ -26,10 +28,9 @@ func main() {
 	flag.BoolVar(&f.openedPRs, "op", false, "show opened pull requests")
 	flag.BoolVar(&f.reviewedPRs, "rp", false, "show reviewed pull requests")
 	flag.BoolVar(&f.openedIssues, "oi", false, "show opened issues")
-
+	flag.StringVar(&f.from, "from", "", "specify time contributed from (yyyy-mm)")
+	flag.StringVar(&f.to, "to", "", "specify time contributed to (yyyy-mm)")
 	flag.Parse()
-
-	c := comatome.NewClient(os.Getenv("GITHUB_API_TOKEN"))
 
 	if f.all {
 		f = flags{
@@ -41,69 +42,86 @@ func main() {
 		}
 	}
 
-	var (
-		now = time.Now()
-
-		from = now.AddDate(0, -1, 0)
-		to   = now
-	)
+	c := comatome.NewClient(os.Getenv("GITHUB_API_TOKEN"))
+	ft, err := fromto(f.from, f.to)
+	if err != nil {
+		panic(err)
+	}
 
 	if f.commits {
-		commits(c, from, to)
+		commits(c, ft)
 		fmt.Println()
 	}
 	if f.createdRepos {
-		createdRepos(c, from, to)
+		createdRepos(c, ft)
 		fmt.Println()
 	}
 	if f.openedPRs {
-		openedPullRequests(c, from, to)
+		openedPullRequests(c, ft)
 		fmt.Println()
 	}
 	if f.reviewedPRs {
-		reviewedPullRequests(c, from, to)
+		reviewedPullRequests(c, ft)
 		fmt.Println()
 	}
 	if f.openedIssues {
-		openedIssues(c, from, to)
+		openedIssues(c, ft)
 		fmt.Println()
 	}
 }
 
-func commits(c *comatome.Client, from, to time.Time) {
-	results, err := comatome.QueryCommitsPerRepo(c, from, to)
+func fromto(from, to string) (*comatome.FromTo, error) {
+	if from != "" || to != "" {
+		f, err := optStrtoTime(from)
+		if err != nil {
+			return nil, err
+		}
+		t, err := optStrtoTime(to)
+		if err != nil {
+			return nil, err
+		}
+		return comatome.NewFromTo(f, t, nil), nil
+	}
+
+	// one month ago from now
+	now := time.Now()
+	return comatome.NewFromTo(now.AddDate(0, -1, 0), now, nil), nil
+}
+
+func commits(c *comatome.Client, fromto *comatome.FromTo) {
+	results, err := comatome.QueryCommitsPerRepo(c, fromto)
 	if err != nil {
 		panic(err)
 	}
 	comatome.ShowCommitsPerRepo(results)
 }
 
-func createdRepos(c *comatome.Client, from, to time.Time) {
-	results, err := comatome.QueryCreatedRepos(c, from, to)
+func createdRepos(c *comatome.Client, fromto *comatome.FromTo) {
+	results, err := comatome.QueryCreatedRepos(c, fromto)
 	if err != nil {
 		panic(err)
 	}
 	comatome.ShowCreatedRepos(results)
 }
 
-func openedPullRequests(c *comatome.Client, from, to time.Time) {
-	results, err := comatome.QueryOpenedPullRequests(c, from, to)
+func openedPullRequests(c *comatome.Client, fromto *comatome.FromTo) {
+	results, err := comatome.QueryOpenedPullRequests(c, fromto)
 	if err != nil {
 		panic(err)
 	}
 	comatome.ShowOpenedPullRequests(results)
 }
 
-func reviewedPullRequests(c *comatome.Client, from, to time.Time) {
-	results, err := comatome.QueryReviewedPullRequests(c, from, to)
+func reviewedPullRequests(c *comatome.Client, fromto *comatome.FromTo) {
+	results, err := comatome.QueryReviewedPullRequests(c, fromto)
 	if err != nil {
 		panic(err)
 	}
 	comatome.ShowReviewedPullRequests(results)
 }
 
-func openedIssues(c *comatome.Client, from, to time.Time) {
-	results, err := comatome.QueryOpenedIssues(c, from, to)
+func openedIssues(c *comatome.Client, fromto *comatome.FromTo) {
+	results, err := comatome.QueryOpenedIssues(c, fromto)
 	if err != nil {
 		panic(err)
 	}
