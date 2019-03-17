@@ -1,5 +1,8 @@
 all: lint build
 
+install:
+	cd $(CURDIR)/cmd/comatome && go install
+
 build:
 	cd $(CURDIR)/cmd/comatome && go build
 
