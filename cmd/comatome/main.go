@@ -79,8 +79,46 @@ func main() {
 	}
 }
 
+// fromto function's behavior is depends on specified from and to.
+//
+// Legends:
+//   - : not specified
+//   o : specified
+//
+// | from | to | treat as
+// |------|----|---------------------------------------------
+// | -    | -  | from: one month ago from now, to: now
+// | o    | -  | from: as specified, to: now
+// | -    | o  | from: one month ago from to, to: as specified
+// | o    | o  | from: as specified, to: as specified
+//
+// If from points future than to, this function returns error.
 func fromto(from, to string) (*comatome.FromTo, error) {
-	if from != "" || to != "" {
+	switch {
+	case from == "" && to == "":
+		t := time.Now()
+		return comatome.NewFromTo(t.AddDate(0, -1, 0), t, time.Local), nil
+
+	case from != "" && to == "":
+		f, err := optStrtoTime(from)
+		if err != nil {
+			return nil, err
+		}
+		t := time.Now()
+		return comatome.NewFromTo(f, t, time.Local), nil
+
+	case from == "" && to != "":
+		t, err := optStrtoTime(to)
+		if err != nil {
+			return nil, err
+		}
+		f := t.AddDate(0, -1, 0)
+		return comatome.NewFromTo(f, t, time.Local), nil
+
+	case from != "" && to != "":
+		fallthrough
+
+	default:
 		f, err := optStrtoTime(from)
 		if err != nil {
 			return nil, err
@@ -91,12 +129,11 @@ func fromto(from, to string) (*comatome.FromTo, error) {
 		}
 		t = t.AddDate(0, 1, 0)
 		t = t.AddDate(0, 0, -1)
-		return comatome.NewFromTo(f, t, nil), nil
+		if f.After(t) {
+			return nil, fmt.Errorf("from must be past of to")
+		}
+		return comatome.NewFromTo(f, t, time.Local), nil
 	}
-
-	// one month ago from now
-	now := time.Now()
-	return comatome.NewFromTo(now.AddDate(0, -1, 0), now, nil), nil
 }
 
 func commits(c *comatome.Client, fromto *comatome.FromTo) {
