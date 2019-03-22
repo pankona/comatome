@@ -21,6 +21,37 @@ type flags struct {
 }
 
 func main() {
+	f := resolveFlags()
+	ft, err := fromto(f.from, f.to)
+	if err != nil {
+		panic(err)
+	}
+
+	c := comatome.NewClient(os.Getenv("GITHUB_API_TOKEN"))
+
+	if f.commits {
+		commits(c, ft)
+		fmt.Println()
+	}
+	if f.createdRepos {
+		createdRepos(c, ft)
+		fmt.Println()
+	}
+	if f.openedPRs {
+		openedPullRequests(c, ft)
+		fmt.Println()
+	}
+	if f.reviewedPRs {
+		reviewedPullRequests(c, ft)
+		fmt.Println()
+	}
+	if f.openedIssues {
+		openedIssues(c, ft)
+		fmt.Println()
+	}
+}
+
+func resolveFlags() flags {
 	f := flags{}
 	flag.BoolVar(&f.all, "all", false, "show all")
 	flag.BoolVar(&f.commits, "co", false, "show commits")
@@ -51,32 +82,7 @@ func main() {
 		}
 	}
 
-	c := comatome.NewClient(os.Getenv("GITHUB_API_TOKEN"))
-	ft, err := fromto(f.from, f.to)
-	if err != nil {
-		panic(err)
-	}
-
-	if f.commits {
-		commits(c, ft)
-		fmt.Println()
-	}
-	if f.createdRepos {
-		createdRepos(c, ft)
-		fmt.Println()
-	}
-	if f.openedPRs {
-		openedPullRequests(c, ft)
-		fmt.Println()
-	}
-	if f.reviewedPRs {
-		reviewedPullRequests(c, ft)
-		fmt.Println()
-	}
-	if f.openedIssues {
-		openedIssues(c, ft)
-		fmt.Println()
-	}
+	return f
 }
 
 // fromto function's behavior is depends on specified from and to.
@@ -87,10 +93,10 @@ func main() {
 //
 // | from | to | treat as
 // |------|----|---------------------------------------------
-// | -    | -  | from: one month ago from now, to: now
-// | o    | -  | from: as specified, to: now
-// | -    | o  | from: one month ago from to, to: as specified
-// | o    | o  | from: as specified, to: as specified
+// | -    | -  | from: 1 month ago from to, to: now
+// | o    | -  | from: as specified,        to: now
+// | -    | o  | from: 1 month ago from to, to: as specified
+// | o    | o  | from: as specified,        to: as specified
 //
 // If from points future than to, this function returns error.
 func fromto(from, to string) (*comatome.FromTo, error) {
@@ -112,6 +118,8 @@ func fromto(from, to string) (*comatome.FromTo, error) {
 		if err != nil {
 			return nil, err
 		}
+		t = t.AddDate(0, 1, 0)
+		t = t.AddDate(0, 0, -1)
 		f := t.AddDate(0, -1, 0)
 		return comatome.NewFromTo(f, t, time.Local), nil
 
