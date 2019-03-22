@@ -29,6 +29,8 @@ func main() {
 
 	c := comatome.NewClient(os.Getenv("GITHUB_API_TOKEN"))
 
+	fmt.Printf("Retrieving contributions from %v to %v\n", ft.From, ft.To)
+
 	if f.commits {
 		commits(c, ft)
 		fmt.Println()
@@ -111,9 +113,9 @@ func fromto(from, to string) (*comatome.FromTo, error) {
 			return nil, err
 		}
 	}
+
 	// let to point last day of the month
-	t = t.AddDate(0, 1, 0)
-	t = t.AddDate(0, 0, -1)
+	t = time.Date(t.Year(), t.Month()+1, 0, 0, 0, 0, 0, time.Local)
 
 	if from == "" {
 		f = t.AddDate(0, -1, 0)
@@ -124,9 +126,13 @@ func fromto(from, to string) (*comatome.FromTo, error) {
 		}
 	}
 
+	// let to point last day of the month
+	f = time.Date(f.Year(), f.Month(), 1, 0, 0, 0, 0, time.Local)
+
 	if f.After(t) {
 		return nil, fmt.Errorf("from must be past of to")
 	}
+
 	return comatome.NewFromTo(f, t, time.Local), nil
 }
 
